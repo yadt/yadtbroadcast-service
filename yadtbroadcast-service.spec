@@ -28,5 +28,11 @@ find %{buildroot} -type f -printf "/%%P\n" >files.lst
 
 %pre
 
+%post
+/sbin/chkconfig --add yadtbroadcast-service
+
+%postun
+/sbin/chkconfig --del yadtbroadcast-service
+
 %clean
 %{__rm} -rf %{buildroot}

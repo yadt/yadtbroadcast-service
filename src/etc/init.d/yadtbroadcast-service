@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# chkconfig: 2345 56 26
 set -u -e -E -o pipefail
 
 CMD=${1:?no command given, aborting}
