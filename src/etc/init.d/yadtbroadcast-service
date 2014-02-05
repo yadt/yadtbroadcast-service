@@ -24,7 +24,10 @@ case "$CMD" in
         if [[ -n $PID ]]; then
             echo "stopping $PROG"
             kill $PID
-            wait $PID
+            while kill -0 "$PID"; do
+                sleep 0.5
+            done
+            echo "Shutdown successful"
             # need to do this with a timeout, but so far there have never been problems
         else
             echo "already stopped"
