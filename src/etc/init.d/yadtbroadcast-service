@@ -3,24 +3,30 @@
 # chkconfig: 2345 56 26
 set -u -e -E -o pipefail
 
-source /etc/sysconfig/yadtbroadcast-server
+
+CONFIGFILE=/etc/sysconfig/yadtbroadcast-server
+
+[[ -r $CONFIGFILE ]] && source $CONFIGFILE
+
+[[ -z $uid ]] && {
+        echo "No uid configured in $CONFIGFILE" >&2
+        exit 1
+}
 
 CMD=${1:?no command given, aborting}
-
-if [[ -z "$1" ]]; then
-    su - $uid  # drop privileges
-fi
 
 PROG=/usr/bin/yadtbroadcast-server.py
 NAME=$(basename $PROG .py)
 PID=$(pidof python | xargs ps -o pid=,cmd= | grep $PROG | sed s/^\\s*// | cut -d" " -f1 || :)
 NOLOG=/tmp/$NAME.nolog
 
+
+
 case "$CMD" in
     start)
         if [[ -z $PID ]]; then
             echo "starting $PROG"
-            exec $PROG < /dev/null > $NOLOG 2>&1 &
+            runuser -l $uid -c $PROG < /dev/null > $NOLOG 2>&1 &
         else
             echo "already running"
         fi
@@ -29,8 +35,8 @@ case "$CMD" in
     stop)
         if [[ -n $PID ]]; then
             echo "stopping $PROG"
-            kill $PID
-            while kill -0 "$PID"; do
+            runuser -l $uid -c "kill $PID"
+            while kill -0 "$PID" > /dev/null 2>&1; do
                 sleep 0.5
             done
             echo "Shutdown successful"
