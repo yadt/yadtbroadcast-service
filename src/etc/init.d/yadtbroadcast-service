@@ -3,7 +3,13 @@
 # chkconfig: 2345 56 26
 set -u -e -E -o pipefail
 
+source /etc/sysconfig/yadtbroadcast-server
+
 CMD=${1:?no command given, aborting}
+
+if [[ -z "$1" ]]; then
+    su - $uid  # drop privileges
+fi
 
 PROG=/usr/bin/yadtbroadcast-server.py
 NAME=$(basename $PROG .py)
