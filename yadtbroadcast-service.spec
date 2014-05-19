@@ -1,6 +1,6 @@
 Summary: yadt broadcast service
 Name: yadtbroadcast-service
-Version: 1.0.3
+Version: 1.0.8
 Release: 1
 License: GPL
 Vendor: Immobilien Scout GmbH
